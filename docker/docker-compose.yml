@@ -1,0 +1,37 @@
+laravel_notes_app:
+    container_name: laravel_notes_app
+    image: busybox
+    volumes:
+        - ../app:/var/www/app/
+
+laravel_notes_nginx:
+    container_name: laravel_notes_nginx
+    build: builds/nginx
+    volumes_from:
+        - laravel_notes_app
+    links:
+        - laravel_notes_php:php
+    volumes:
+        - ./logs/nginx:/var/log/nginx
+    ports:
+        - 8000:80
+
+laravel_notes_php:
+    container_name: laravel_notes_php
+    build: builds/php-fpm
+    volumes_from:
+        - laravel_notes_app
+    links:
+        - laravel_notes_mysql:mysql
+    working_dir: /var/www/app
+
+laravel_notes_mysql:
+    container_name: laravel_notes_mysql
+    image: mysql:5.7
+    volumes:
+        - ./mysql:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: db
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
