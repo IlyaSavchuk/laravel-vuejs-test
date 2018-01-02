@@ -53,7 +53,7 @@ RUN docker-php-ext-install \
 RUN yes | pecl install xdebug
 ADD xdebug.ini /usr/local/etc/php/conf.d/
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
 RUN apt-get install nodejs build-essential -y
 
 RUN apt-get update && apt-get install git g++ -y

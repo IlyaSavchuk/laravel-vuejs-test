@@ -4,65 +4,67 @@ namespace App\Http\Controllers;
 
 use App\NoteComment;
 use Illuminate\Http\Request;
+use App\Note;
 
 class NoteCommentController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Note $note
+     * @return Array
      */
-    public function index($note)
+    public function index(Note $note)
     {
-        return NoteComment::where(['node_id' => $note]);
+        return NoteComment::where(['note_id' => $note]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Note $note
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store(Request $request, $note)
+    public function store(Request $request, Note $note)
     {
-        return Note::find($note)->comments()->create($request->all());
+        return $note->comments()->create($request->all());
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\NoteComment $noteComment
-     * @return \Illuminate\Http\Response
+     * @param Note $note
+     * @param NoteComment $noteComment
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Relations\HasMany[]|null
      */
-    public function show($note, NoteComment $noteComment)
+    public function show(Note $note, NoteComment $noteComment)
     {
-        return Note::find($note)->comments()->find($noteComment);
+        return $noteComment;
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\NoteComment $noteComment
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Note $note
+     * @param NoteComment $noteComment
+     * @return NoteComment|\Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $note, NoteComment $noteComment)
+    public function update(Request $request, Note $note, NoteComment $noteComment)
     {
-        $note = Note::findOrFail($note);
-        $note->update($request->all());
+        $noteComment->update($request->all());
 
-        return $note;
+        return $noteComment;
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\NoteComment $noteComment
-     * @return \Illuminate\Http\Response
+     * @param Note $note
+     * @param NoteComment $noteComment
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function destroy($note, NoteComment $noteComment)
+    public function destroy(Note $note, NoteComment $noteComment)
     {
-        NoteComment::findOrFail($noteComment)->delete();
-        return Response::HTTP_NO_CONTENT;
+        $noteComment->delete();
+
+        return response()->json(['message' => 'Record is deleted'], 204);
     }
 }

@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    protected $fillable = ['name', 'content', 'file_name'];
+    protected $fillable = ['name', 'content', 'file'];
+
+    protected $with = ['comments'];
 
     public function comments()
     {

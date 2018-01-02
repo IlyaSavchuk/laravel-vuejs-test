@@ -15,7 +15,14 @@ class CreateNoteCommentsTable extends Migration
     {
         Schema::create('note_comments', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('author');
+            $table->string('content');
+            $table->unsignedInteger('note_id');
             $table->timestamps();
+
+            $table->foreign('note_id')
+                ->references('id')->on('notes')
+                ->onDelete('cascade');
         });
     }
 

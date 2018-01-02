@@ -17,7 +17,7 @@ class CreateNotesTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('content');
-            $table->string('file_name');
+            $table->string('file');
             $table->timestamps();
         });
     }

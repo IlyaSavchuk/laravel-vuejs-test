@@ -2,26 +2,51 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-// import Note from './models/Note'
-// import NoteComment from './models/NoteComment'
-import NoteList from './components/NoteList'
+import VeeValidate from 'vee-validate'
+import store from './store'
+import {VInput, VTextArea, VFileSelect, VButton} from './vueComponents'
+
+Vue.use(VeeValidate)
 
 const app = new Vue({
     el: '#app',
     data: {
-        notes: []
+        note: {},
+        selectNote: {}
+    },
+    computed: {
+        notes() {
+            return store.state.notes
+        }
+    },
+    store,
+    components: {
+        VInput, VTextArea, VFileSelect, VButton
     },
     mounted() {
-        axios.get('/api/notes')
-            .then(response => {
-                this.notes = response.data;
-            })
-            .catch(response => {
-                console.log(response);
-            });
+        store.commit('getNotes')
     },
-    components: {
-        NoteList
+    methods: {
+        remove(id) {
+            store.dispatch('removeNote', {id: id})
+        },
+        save() {
+            if (this.note.id) {
+                store.dispatch('updateNote', this.note)
+            } else {
+                store.dispatch('addNote', this.note)
+            }
+            this.note = {}
+        },
+        edit(id) {
+            $('html, body').animate({scrollTop: 0}, 500, 'swing');
+            $('#name').focus();
+            this.note = this.notes.find(function (item) {
+                return item.id === id
+            })
+        },
+        addComment(note) {
+            store.dispatch('addComment', note)
+        }
     }
-
 });
